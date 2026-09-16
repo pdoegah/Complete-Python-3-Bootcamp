@@ -8,7 +8,12 @@ see **who contributed and how much**. Only one or two designated managers can
 change the record. Everyone else has read-only access, enforced by the host,
 not by trust.
 
-There are two builds of the same product in this folder:
+**In use:** the `webapp/` build, hosted free on PythonAnywhere at
+https://contributions.pythonanywhere.com. Manager sign-in is at `/manage`.
+The free plan needs its "Run until 3 months from today" button pressed on
+the Web tab every three months, or the site sleeps until it is pressed.
+
+There are three builds of the same product in this folder:
 
 - **`index.html`** is the claude.ai-hosted page. Live copy:
   https://claude.ai/artifact/8T97vnSBXb7ZEvZuGATJnz. Editing it needs a
@@ -17,6 +22,9 @@ There are two builds of the same product in this folder:
   sign-in. Managers need no account anywhere else. See `webapp/README.md`
   for the hosting guide. This is the recommended build when the managers
   are not the person who created the ledger.
+- **`google_sheet/`** is a formula-only Google Sheet build with no server.
+  Retired for this group after the manager typed on the wrong tab; kept
+  here in case another group prefers a spreadsheet.
 
 The rest of this file describes the claude.ai-hosted page.
 
