@@ -55,17 +55,26 @@ Go to https://www.pythonanywhere.com, choose the free "Beginner" plan, and
 pick a username. Your public link will be
 `https://<username>.pythonanywhere.com`.
 
-**Step 2. Get the code onto the server.**
-On the dashboard, open a **Bash console** and run:
+**Step 2. Put the code on the server.**
+Open the **Files** tab. Upload `contribution-ledger-webapp.zip` (the file
+that came with these instructions) into your home folder. Then open a
+**Bash console** from the dashboard and run:
+
+```
+unzip contribution-ledger-webapp.zip
+pip3 install --user -r webapp/requirements.txt
+```
+
+That creates a `webapp` folder at `/home/<username>/webapp`.
+
+If you prefer to get the code from GitHub instead, run this in the Bash
+console and use `/home/<username>/Complete-Python-3-Bootcamp/group_contribution_tracker/webapp`
+as the folder in the steps below:
 
 ```
 git clone https://github.com/pdoegah/Complete-Python-3-Bootcamp.git
-cd Complete-Python-3-Bootcamp/group_contribution_tracker/webapp
-pip3 install --user -r requirements.txt
+pip3 install --user -r Complete-Python-3-Bootcamp/group_contribution_tracker/webapp/requirements.txt
 ```
-
-If the repository is private, upload the `webapp` folder with the
-**Files** tab instead of `git clone`.
 
 **Step 3. Create the web app.**
 Open the **Web** tab, press **Add a new web app**, choose **Manual
@@ -74,19 +83,18 @@ configuration**, then the newest **Python 3** version offered.
 **Step 4. Point it at the code.**
 Still on the Web tab:
 
-- Under **Code**, set *Source code* to
-  `/home/<username>/Complete-Python-3-Bootcamp/group_contribution_tracker/webapp`
+- Under **Code**, set *Source code* to `/home/<username>/webapp`
 - Under **Code**, click the *WSGI configuration file* link. Delete
   everything in it and paste:
 
 ```python
 import sys
-sys.path.insert(0, "/home/<username>/Complete-Python-3-Bootcamp/group_contribution_tracker/webapp")
+sys.path.insert(0, "/home/<username>/webapp")
 from wsgi import application
 ```
 
 - Under **Static files**, add one row: URL `/static/`, directory
-  `/home/<username>/Complete-Python-3-Bootcamp/group_contribution_tracker/webapp/static`
+  `/home/<username>/webapp/static`
 
 Replace `<username>` with your PythonAnywhere username in all three places.
 
@@ -98,6 +106,9 @@ Give each manager their username and password privately.
 
 **Step 6. Share.**
 Post `https://<username>.pythonanywhere.com` in the WhatsApp group.
+
+**Total cost: nothing.** The Beginner plan is free, and the app needs
+nothing beyond it.
 
 **Keeping it alive.** Free PythonAnywhere apps must be renewed every three
 months: sign in to PythonAnywhere, open the Web tab and press **Run until 3
