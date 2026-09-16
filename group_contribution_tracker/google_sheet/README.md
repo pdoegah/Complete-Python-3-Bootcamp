@@ -20,4 +20,4 @@ build.py` adds sample rows for checking the formulas). Uploading the
 INDEX, MATCH, COUNTIF, SUMIF and SUMPRODUCT, which convert cleanly. The
 by-member table lists up to 60 distinct contributors.
 
-Live copy: https://docs.google.com/spreadsheets/d/1nKktdVE2rlnnz5DRAdEXJ0q7Iyw2SPJpsZYCfAKIbKM/edit
+Live copy: https://docs.google.com/spreadsheets/d/1WRzPD-C5mBoySDv3iFYoUKdigYPKXBJPajC18v0iNOI/edit

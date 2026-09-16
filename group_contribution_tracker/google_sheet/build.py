@@ -26,7 +26,10 @@ ws.sheet_view.showGridLines = False
 for col, w in zip("ABCDE", [6, 34, 14, 18, 4]):
     ws.column_dimensions[col].width = w
 
-ws["A1"] = "CONTRIBUTION LEDGER"; ws["A1"].font = F(size=9, bold=True, color=GREEN)
+ws.merge_cells("A1:D1")
+ws["A1"] = "CHARLES: to record a payment, tap the 'Contributions' tab at the bottom of the screen. Do not type on this page."
+ws["A1"].font = F(size=11, bold=True, color="6D4F05"); ws["A1"].fill = PatternFill("solid", fgColor="FBF0D3")
+ws["A1"].alignment = Alignment(wrap_text=True, vertical="center"); ws.row_dimensions[1].height = 34
 ws.merge_cells("A2:D2"); ws["A2"] = TITLE; ws["A2"].font = F(size=16, bold=True, color=INK)
 ws["A2"].alignment = Alignment(wrap_text=True, vertical="top"); ws.row_dimensions[2].height = 44
 ws.merge_cells("A3:D3"); ws["A3"] = DESC; ws["A3"].font = F(size=10, color="4D5C56")
@@ -101,6 +104,11 @@ for r in range(2, 62):
 # sample rows: only in the test build, used to verify the formulas after upload
 import os, datetime
 MODE = os.environ.get("MODE", "final")
+if MODE == "final" and os.environ.get("PREFILL"):
+    for i, line in enumerate(os.environ["PREFILL"].split(";"), 2):
+        d, n, a, note = line.split("|")
+        cs.cell(row=i, column=1, value=datetime.date.fromisoformat(d)); cs.cell(row=i, column=2, value=n)
+        cs.cell(row=i, column=3, value=float(a)); cs.cell(row=i, column=4, value=note)
 if MODE == "test":
     rows = [(datetime.date(2026,9,2),"Amina Yusuf",200,"Bank transfer"),(datetime.date(2026,9,3),"Kwame Mensah",150.5,"Cash"),
             (datetime.date(2026,9,5),"Priya Raman",300,""),(datetime.date(2026,9,10),"amina yusuf",100,"USD 8 via MoMo"),
