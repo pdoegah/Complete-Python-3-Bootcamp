@@ -124,7 +124,7 @@ lines = [
     ("", False),
     ("MEMBERS: open the Ledger tab. It shows the total collected, how many people have given, and each person's total. Nothing on it can be typed into.", False),
     ("", False),
-    ("MANAGERS (Charles Quaye, Emmanuel Kpakpo Addo): open the Contributions tab and type one row per payment received:", False),
+    ("MANAGER (Charles Quaye): open the Contributions tab and type one row per payment received:", False),
     ("   1. Date received – the day the money arrived.", False),
     ("   2. Member name – type the name the same way each time so the person's payments add up together (e.g. always 'Ama Mensah', not sometimes 'Ama').", False),
     ("   3. Amount (GHS) – the amount in cedis, numbers only.", False),
