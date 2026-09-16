@@ -1,0 +1,698 @@
+<title>Contribution Ledger</title>
+<meta name="description" content="A shared record of who has contributed to the group fund and how much. Anyone with the link can view it; only the managers can change it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style id="css">
+:root {
+  --paper: #f4f7f5;
+  --surface: #ffffff;
+  --surface-2: #e9efec;
+  --ink: #17231e;
+  --ink-2: #4d5c56;
+  --muted: #7a8983;
+  --line: #d3dcd7;
+  --line-strong: #aebbb4;
+  --accent: #1f6f50;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcefe5;
+  --accent-soft-ink: #175a41;
+  --danger: #a93f2a;
+  --danger-soft: #f6e3de;
+  --warn-soft: #fbf0d3;
+  --warn-ink: #6d4f05;
+  --shadow: 0 10px 30px rgba(23, 35, 30, 0.10);
+  --radius: 10px;
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1613;
+    --surface: #182019;
+    --surface-2: #1f2a24;
+    --ink: #e6ece8;
+    --ink-2: #b2bfb8;
+    --muted: #7f8e87;
+    --line: #2a3630;
+    --line-strong: #3e4d45;
+    --accent: #5cc48f;
+    --accent-ink: #0f1613;
+    --accent-soft: #1d3a2d;
+    --accent-soft-ink: #9fdcbd;
+    --danger: #e07a63;
+    --danger-soft: #3c1f19;
+    --warn-soft: #3a3115;
+    --warn-ink: #e6c66c;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1613;
+  --surface: #182019;
+  --surface-2: #1f2a24;
+  --ink: #e6ece8;
+  --ink-2: #b2bfb8;
+  --muted: #7f8e87;
+  --line: #2a3630;
+  --line-strong: #3e4d45;
+  --accent: #5cc48f;
+  --accent-ink: #0f1613;
+  --accent-soft: #1d3a2d;
+  --accent-soft-ink: #9fdcbd;
+  --danger: #e07a63;
+  --danger-soft: #3c1f19;
+  --warn-soft: #3a3115;
+  --warn-ink: #e6c66c;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { height: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+.wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  padding-inline: 16px;
+  padding-block: 28px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.eyebrow {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-soft-ink);
+}
+h1 {
+  margin: 4px 0 0;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(28px, 5vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.desc { margin: 8px 0 0; color: var(--ink-2); max-width: 62ch; }
+.meta { margin: 10px 0 0; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.meta b { color: var(--ink-2); font-weight: 500; }
+.notice {
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 14px;
+  background: var(--warn-soft);
+  color: var(--warn-ink);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px;
+}
+.notice.ok { background: var(--accent-soft); color: var(--accent-soft-ink); }
+.notice.bad { background: var(--danger-soft); color: var(--danger); }
+.summary {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.tile { background: var(--surface); padding: 16px 18px; min-width: 0; }
+.tile .label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.tile .value { font-family: var(--mono); font-size: 26px; font-weight: 500; margin-top: 4px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.tile.total .value { font-family: var(--display); font-size: clamp(32px, 6vw, 44px); font-weight: 600; color: var(--accent); letter-spacing: -0.01em; line-height: 1.05; }
+.tile .sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.goal { grid-column: 1 / -1; background: var(--surface); padding: 12px 18px 16px; }
+.goal .row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.bar { height: 8px; border-radius: 99px; background: var(--surface-2); margin-top: 8px; overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--accent); border-radius: 99px; width: 0; transition: width 400ms ease; }
+@media (prefers-reduced-motion: reduce) { .bar > i { transition: none; } }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg button {
+  border: 0; background: transparent; color: var(--ink-2); padding: 8px 14px; font: inherit; font-weight: 500; cursor: pointer;
+}
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.seg button:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.search { flex: 1 1 200px; min-width: 0; }
+input, textarea, select {
+  width: 100%; font: inherit; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line-strong); border-radius: 8px; padding: 8px 10px;
+}
+textarea { min-height: 64px; resize: vertical; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; font: inherit; font-weight: 500; cursor: pointer;
+  padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink);
+  white-space: nowrap;
+}
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.danger { color: var(--danger); border-color: var(--danger); background: transparent; }
+.btn.quiet { border-color: transparent; background: transparent; color: var(--ink-2); }
+.btn[disabled] { opacity: 0.5; cursor: default; }
+.btn.small { padding: 4px 9px; font-size: 13px; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; white-space: nowrap; position: sticky; top: 0; background: var(--surface); }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.rank { color: var(--muted); font-family: var(--mono); width: 2.5em; }
+td.name { font-weight: 500; }
+td.note { color: var(--ink-2); max-width: 32ch; }
+td.date { white-space: nowrap; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+td.actions { white-space: nowrap; text-align: right; }
+tr.pending td { background: var(--warn-soft); }
+tr.removed td { text-decoration: line-through; color: var(--muted); }
+tfoot td { font-weight: 600; border-top: 2px solid var(--line-strong); }
+.empty { padding: 28px 16px; text-align: center; color: var(--muted); }
+.foot { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border-radius: 99px; background: var(--accent-soft); color: var(--accent-soft-ink); vertical-align: middle; }
+.tag.ex { background: var(--warn-soft); color: var(--warn-ink); }
+
+/* Manager panel */
+.panel {
+  border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow);
+  display: flex; flex-direction: column; gap: 0;
+}
+.panel > header { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.panel > header h2 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 22px; }
+.panel section { padding: 16px 18px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
+.panel section:last-child { border-bottom: 0; }
+.panel h3 { margin: 0; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.panel p.help { margin: 0; font-size: 13px; color: var(--ink-2); max-width: 62ch; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.grid .full { grid-column: 1 / -1; }
+label.f { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 500; color: var(--ink-2); }
+.row-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.draftbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  background: var(--ink); color: var(--paper);
+  display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.draftbar .btn { border-color: transparent; }
+.draftbar .btn.primary { background: var(--accent); color: var(--accent-ink); }
+.draftbar .btn.quiet { color: var(--paper); }
+.toast {
+  position: fixed; left: 50%; bottom: calc(72px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line-strong); box-shadow: var(--shadow);
+  padding: 10px 14px; border-radius: 8px; font-size: 14px; max-width: calc(100vw - 32px); z-index: 11;
+}
+@media (max-width: 560px) {
+  .summary { grid-template-columns: 1fr 1fr; }
+  .tile.total { grid-column: 1 / -1; }
+  .grid { grid-template-columns: 1fr; }
+  th, td { padding: 9px 10px; }
+  .hide-sm { display: none; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Contribution ledger</p>
+    <h1 id="groupName">Group Fund</h1>
+    <p class="desc" id="groupDesc"></p>
+    <p class="meta"><span>Managed by <b id="managers">the group managers</b></span><span>Last updated <b id="updated">never</b></span></p>
+  </header>
+
+  <div id="exampleNotice" class="notice" hidden>
+    <span>These rows are <b>examples</b> so you can see how the ledger looks. A manager can remove them from the manager tools.</span>
+  </div>
+  <div id="readonlyNotice" class="notice bad" hidden></div>
+  <div id="draftNotice" class="notice" hidden>
+    <span>You have unsaved ledger changes from before.</span>
+    <button type="button" class="btn small" id="restoreDraft">Restore them</button>
+    <button type="button" class="btn small quiet" id="dropDraft">Discard</button>
+  </div>
+
+  <section class="summary" aria-label="Summary">
+    <div class="tile total"><div class="label">Total collected</div><div class="value" id="total">0</div><div class="sub" id="totalSub"></div></div>
+    <div class="tile"><div class="label">Contributors</div><div class="value" id="countMembers">0</div><div class="sub">people who gave</div></div>
+    <div class="tile"><div class="label">Entries</div><div class="value" id="countEntries">0</div><div class="sub">payments recorded</div></div>
+    <div class="goal" id="goalBox" hidden>
+      <div class="row"><span id="goalLabel">Goal</span><span id="goalPct"></span></div>
+      <div class="bar"><i id="goalBar"></i></div>
+    </div>
+  </section>
+
+  <div class="toolbar">
+    <div class="seg" role="group" aria-label="View">
+      <button type="button" id="viewMembers" aria-pressed="true">By member</button>
+      <button type="button" id="viewEntries" aria-pressed="false">All entries</button>
+    </div>
+    <input class="search" id="search" type="search" placeholder="Search a name" aria-label="Search by name" autocomplete="off">
+    <button type="button" class="btn" id="exportBtn" hidden>Export CSV</button>
+    <button type="button" class="btn" id="manageBtn" hidden>Manager tools</button>
+  </div>
+
+  <div class="tablewrap"><table id="table"></table></div>
+
+  <p class="foot"><span>Members can view this page but not change it. To correct an entry, contact a manager.</span><span id="entryCount"></span></p>
+
+  <section class="panel" id="managePanel" hidden aria-label="Manager tools">
+    <header><h2>Manager tools</h2><button type="button" class="btn quiet" id="closeManage">Close</button></header>
+
+    <section>
+      <h3 id="formTitle">Record a contribution</h3>
+      <form id="entryForm" class="grid" autocomplete="off">
+        <label class="f">Member name<input id="fName" list="nameList" required maxlength="80" placeholder="e.g. Amina Yusuf"><datalist id="nameList"></datalist></label>
+        <label class="f">Amount<input id="fAmount" type="number" inputmode="decimal" step="0.01" min="0.01" required placeholder="0.00"></label>
+        <label class="f">Date received<input id="fDate" type="date" required></label>
+        <label class="f">Note (optional)<input id="fNote" maxlength="120" placeholder="e.g. Cash, via Kwame"></label>
+        <div class="full row-actions">
+          <button type="submit" class="btn primary" id="fSubmit">Add to ledger</button>
+          <button type="button" class="btn quiet" id="fCancel" hidden>Cancel edit</button>
+        </div>
+      </form>
+      <p class="help">Changes are staged first. Nothing is visible to members until you press <b>Publish</b> in the bar at the bottom.</p>
+    </section>
+
+    <section>
+      <h3>Group settings</h3>
+      <form id="settingsForm" class="grid" autocomplete="off">
+        <label class="f">Group name<input id="sName" required maxlength="80"></label>
+        <label class="f">Currency code<input id="sCurrency" maxlength="3" minlength="3" required placeholder="USD" style="text-transform:uppercase"></label>
+        <label class="f full">Description<textarea id="sDesc" maxlength="300"></textarea></label>
+        <label class="f">Fund goal (optional)<input id="sGoal" type="number" inputmode="decimal" step="0.01" min="0" placeholder="Leave blank for no goal"></label>
+        <label class="f">Manager names (comma separated)<input id="sManagers" maxlength="200" placeholder="e.g. Amina Yusuf, Kwame Mensah"></label>
+        <div class="full row-actions"><button type="submit" class="btn">Stage settings</button></div>
+      </form>
+    </section>
+
+    <section>
+      <h3>Housekeeping</h3>
+      <div class="row-actions">
+        <button type="button" class="btn" id="clearExamples">Remove example rows</button>
+        <button type="button" class="btn danger" id="clearAll">Delete every entry</button>
+      </div>
+      <p class="help">Both actions are staged too. You can discard them from the bottom bar before publishing.</p>
+    </section>
+  </section>
+</div>
+
+<div class="draftbar" id="draftBar" hidden>
+  <span id="draftText">Unsaved changes</span>
+  <button type="button" class="btn primary" id="publishBtn">Publish</button>
+  <button type="button" class="btn quiet" id="discardBtn">Discard</button>
+</div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script id="state" type="application/json">{"version":1,"group":{"name":"Class of 2010 Alumni Fund","description":"Voluntary contributions towards the reunion and the welfare fund. Every payment received is recorded here by the treasurers.","currency":"USD","goal":5000,"managers":["Treasurer 1","Treasurer 2"],"updatedAt":"2026-09-16T09:00:00.000Z","example":true},"contributions":[{"id":"ex1","name":"Amina Yusuf","amount":200,"date":"2026-09-02","note":"Bank transfer"},{"id":"ex2","name":"Kwame Mensah","amount":150,"date":"2026-09-03","note":"Cash"},{"id":"ex3","name":"Priya Raman","amount":300,"date":"2026-09-05","note":""},{"id":"ex4","name":"Amina Yusuf","amount":100,"date":"2026-09-10","note":"Second payment"},{"id":"ex5","name":"Daniel Okafor","amount":50,"date":"2026-09-12","note":"Mobile money"}]}</script>
+<script id="app">
+(function () {
+  "use strict";
+  var APP_SRC = document.currentScript ? document.currentScript.textContent : "";
+  var TITLE = "Contribution Ledger";
+  var $ = function (id) { return document.getElementById(id); };
+
+  // ---------- state ----------
+  var live = readState();          // what is published right now
+  var draft = null;                // a working copy while a manager edits
+  var editingId = null;
+  var view = "members";
+  var canWrite = false;
+  var artifactNS = null;
+  var downloadsNS = null;
+  var pendingLabels = [];
+
+  function readState() {
+    try {
+      var s = JSON.parse($("state").textContent);
+      if (!s || !s.group || !Array.isArray(s.contributions)) throw new Error("bad state");
+      return s;
+    } catch (e) {
+      return { version: 1, group: { name: "Group Fund", description: "", currency: "USD", goal: null, managers: [], updatedAt: null }, contributions: [] };
+    }
+  }
+  function current() { return draft || live; }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function ensureDraft() { if (!draft) draft = clone(live); return draft; }
+
+  // ---------- formatting ----------
+  function money(n, cur) {
+    cur = cur || current().group.currency || "USD";
+    try { return new Intl.NumberFormat(undefined, { style: "currency", currency: cur }).format(n); }
+    catch (e) { return cur + " " + Number(n).toFixed(2); }
+  }
+  function niceDate(iso) {
+    if (!iso) return "";
+    var p = iso.split("-");
+    if (p.length !== 3) return iso;
+    var d = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2]));
+    try { return d.toLocaleDateString(undefined, { timeZone: "UTC", day: "numeric", month: "short", year: "numeric" }); }
+    catch (e) { return iso; }
+  }
+  function niceStamp(iso) {
+    if (!iso) return "never";
+    try { return new Date(iso).toLocaleString(undefined, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }); }
+    catch (e) { return iso; }
+  }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function today() {
+    var d = new Date(); var m = d.getMonth() + 1, day = d.getDate();
+    return d.getFullYear() + "-" + (m < 10 ? "0" : "") + m + "-" + (day < 10 ? "0" : "") + day;
+  }
+  function newId() { return "c" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function normName(s) { return String(s || "").trim().replace(/\s+/g, " ").toLowerCase(); }
+
+  // ---------- rendering ----------
+  function render() {
+    var st = current();
+    var g = st.group;
+    var rows = st.contributions.slice();
+    document.title = TITLE;
+    $("groupName").textContent = g.name || "Group Fund";
+    $("groupDesc").textContent = g.description || "";
+    $("groupDesc").hidden = !g.description;
+    $("managers").textContent = (g.managers && g.managers.length) ? g.managers.join(", ") : "the group managers";
+    $("updated").textContent = niceStamp(live.group.updatedAt);
+    $("exampleNotice").hidden = !g.example;
+
+    var total = 0, names = {};
+    rows.forEach(function (r) { total += Number(r.amount) || 0; names[normName(r.name)] = 1; });
+    $("total").textContent = money(total, g.currency);
+    $("totalSub").textContent = g.goal ? "of a " + money(g.goal, g.currency) + " goal" : "in " + (g.currency || "USD");
+    $("countMembers").textContent = Object.keys(names).length;
+    $("countEntries").textContent = rows.length;
+    if (g.goal && g.goal > 0) {
+      var pct = Math.min(100, Math.round(total / g.goal * 100));
+      $("goalBox").hidden = false;
+      $("goalLabel").textContent = "Progress towards " + money(g.goal, g.currency);
+      $("goalPct").textContent = pct + "%" + (total >= g.goal ? " · goal reached" : " · " + money(g.goal - total, g.currency) + " to go");
+      $("goalBar").style.width = pct + "%";
+    } else {
+      $("goalBox").hidden = true;
+    }
+
+    var q = normName($("search").value);
+    var filtered = q ? rows.filter(function (r) { return normName(r.name).indexOf(q) !== -1; }) : rows;
+    $("viewMembers").setAttribute("aria-pressed", view === "members" ? "true" : "false");
+    $("viewEntries").setAttribute("aria-pressed", view === "entries" ? "true" : "false");
+    $("table").innerHTML = view === "members" ? membersTable(filtered, g) : entriesTable(filtered, g);
+    $("entryCount").textContent = q ? filtered.length + " of " + rows.length + " entries match" : "";
+
+    // datalist of known names for the form
+    var seen = {}, opts = "";
+    rows.forEach(function (r) { var k = normName(r.name); if (!seen[k]) { seen[k] = 1; opts += "<option value=\"" + esc(r.name) + "\"></option>"; } });
+    $("nameList").innerHTML = opts;
+
+    // draft bar
+    var n = pendingLabels.length;
+    $("draftBar").hidden = !(draft && n);
+    $("draftText").textContent = n === 1 ? "1 unsaved change: " + pendingLabels[0] : n + " unsaved changes";
+  }
+
+  function membersTable(rows, g) {
+    if (!rows.length) return "<tr><td class=\"empty\">No contributions recorded yet.</td></tr>";
+    var by = {}, order = [];
+    rows.forEach(function (r) {
+      var k = normName(r.name);
+      if (!by[k]) { by[k] = { name: r.name.trim(), total: 0, count: 0, last: "" }; order.push(k); }
+      by[k].total += Number(r.amount) || 0; by[k].count += 1;
+      if (r.date > by[k].last) by[k].last = r.date;
+    });
+    var list = order.map(function (k) { return by[k]; }).sort(function (a, b) { return b.total - a.total || a.name.localeCompare(b.name); });
+    var sum = 0;
+    var body = list.map(function (m, i) {
+      sum += m.total;
+      return "<tr><td class=\"rank hide-sm\">" + (i + 1) + "</td><td class=\"name\">" + esc(m.name) + "</td><td class=\"num\">" + m.count + "</td><td class=\"date hide-sm\">" + niceDate(m.last) + "</td><td class=\"num\">" + esc(money(m.total, g.currency)) + "</td></tr>";
+    }).join("");
+    return "<thead><tr><th class=\"hide-sm\">#</th><th>Member</th><th class=\"num\">Payments</th><th class=\"hide-sm\">Last paid</th><th class=\"num\">Total given</th></tr></thead><tbody>" + body +
+      "</tbody><tfoot><tr><td class=\"hide-sm\"></td><td>" + list.length + " contributors</td><td class=\"num\">" + rows.length + "</td><td class=\"hide-sm\"></td><td class=\"num\">" + esc(money(sum, g.currency)) + "</td></tr></tfoot>";
+  }
+
+  function entriesTable(rows, g) {
+    if (!rows.length) return "<tr><td class=\"empty\">No contributions recorded yet.</td></tr>";
+    var list = rows.slice().sort(function (a, b) { return (b.date || "").localeCompare(a.date || "") || (b.id || "").localeCompare(a.id || ""); });
+    var liveIds = {}; live.contributions.forEach(function (r) { liveIds[r.id] = r; });
+    var sum = 0;
+    var body = list.map(function (r) {
+      sum += Number(r.amount) || 0;
+      var pend = draft && (!liveIds[r.id] || JSON.stringify(liveIds[r.id]) !== JSON.stringify(r));
+      var act = canWrite && !$("managePanel").hidden
+        ? "<td class=\"actions\"><button type=\"button\" class=\"btn small\" data-edit=\"" + esc(r.id) + "\">Edit</button> <button type=\"button\" class=\"btn small danger\" data-del=\"" + esc(r.id) + "\">Delete</button></td>"
+        : "";
+      return "<tr" + (pend ? " class=\"pending\"" : "") + "><td class=\"date\">" + niceDate(r.date) + "</td><td class=\"name\">" + esc(r.name) + (pend ? " <span class=\"tag\">unsaved</span>" : "") + "</td><td class=\"num\">" + esc(money(r.amount, g.currency)) + "</td><td class=\"note hide-sm\">" + esc(r.note || "") + "</td>" + act + "</tr>";
+    }).join("");
+    var actH = canWrite && !$("managePanel").hidden ? "<th></th>" : "";
+    return "<thead><tr><th>Date</th><th>Member</th><th class=\"num\">Amount</th><th class=\"hide-sm\">Note</th>" + actH + "</tr></thead><tbody>" + body +
+      "</tbody><tfoot><tr><td></td><td>" + list.length + " entries</td><td class=\"num\">" + esc(money(sum, g.currency)) + "</td><td class=\"hide-sm\"></td>" + (actH ? "<td></td>" : "") + "</tr></tfoot>";
+  }
+
+  // ---------- building the next version of this page ----------
+  function stateJson(st) { return JSON.stringify(st).replace(/</g, "\\u003c"); }
+  function buildPage(st) {
+    var css = $("css").textContent;
+    var body = document.querySelector(".wrap").outerHTML;
+    // the visible markup is regenerated from a clean copy so no viewer state leaks in
+    return "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\">\n<title>" + esc(TITLE) + "</title>\n" +
+      "<meta name=\"description\" content=\"A shared record of who has contributed to the group fund and how much. Anyone with the link can view it; only the managers can change it.\">\n" +
+      "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap\">\n" +
+      "<style id=\"css\">" + css + "</style>\n</head>\n<body>\n" + cleanMarkup(body) + "\n" + STATIC_TAIL +
+      "<script id=\"state\" type=\"application/json\">" + stateJson(st) + "<\/script>\n<script id=\"app\">" + APP_SRC + "<\/script>\n</body>\n</html>\n";
+  }
+  var STATIC_TAIL = "<div class=\"draftbar\" id=\"draftBar\" hidden>\n  <span id=\"draftText\">Unsaved changes</span>\n  <button type=\"button\" class=\"btn primary\" id=\"publishBtn\">Publish</button>\n  <button type=\"button\" class=\"btn quiet\" id=\"discardBtn\">Discard</button>\n</div>\n<div class=\"toast\" id=\"toast\" hidden role=\"status\"></div>\n\n";
+  function cleanMarkup(html) {
+    // Parse a copy of the page shell and reset it to its at-rest form before serialising.
+    var tpl = document.createElement("template");
+    tpl.innerHTML = html;
+    var root = tpl.content.firstElementChild;
+    root.querySelectorAll("input, textarea, select").forEach(function (el) {
+      el.removeAttribute("value"); if (el.tagName === "TEXTAREA") el.textContent = "";
+    });
+    root.querySelector("#table").innerHTML = "";
+    root.querySelector("#nameList").innerHTML = "";
+    root.querySelector("#groupDesc").textContent = "";
+    root.querySelector("#readonlyNotice").textContent = "";
+    ["exampleNotice", "readonlyNotice", "draftNotice", "goalBox", "exportBtn", "manageBtn", "managePanel", "fCancel"].forEach(function (id) { root.querySelector("#" + id).setAttribute("hidden", ""); });
+    root.querySelector("#groupDesc").removeAttribute("hidden");
+    root.querySelector("#goalBar").removeAttribute("style");
+    root.querySelector("#fSubmit").textContent = "Add to ledger";
+    root.querySelector("#manageBtn").textContent = "Manager tools";
+    root.querySelector("#clearAll").textContent = "Delete every entry";
+    root.querySelector("#formTitle").textContent = "Record a contribution";
+    return root.outerHTML;
+  }
+
+  // ---------- manager actions ----------
+  function stage(label) { pendingLabels.push(label); saveDraftLocally(); render(); }
+  function saveDraftLocally() {
+    try { sessionStorage.setItem("ledger-draft", JSON.stringify({ draft: draft, labels: pendingLabels })); } catch (e) {}
+  }
+  function clearLocalDraft() { try { sessionStorage.removeItem("ledger-draft"); } catch (e) {} }
+
+  function resetForm() {
+    editingId = null;
+    $("entryForm").reset();
+    $("fDate").value = today();
+    $("fSubmit").textContent = "Add to ledger";
+    $("formTitle").textContent = "Record a contribution";
+    $("fCancel").hidden = true;
+  }
+  function fillSettings() {
+    var g = current().group;
+    $("sName").value = g.name || ""; $("sCurrency").value = g.currency || "USD"; $("sDesc").value = g.description || "";
+    $("sGoal").value = g.goal ? g.goal : ""; $("sManagers").value = (g.managers || []).join(", ");
+  }
+
+  $("entryForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var name = $("fName").value.trim().replace(/\s+/g, " ");
+    var amount = Math.round(parseFloat($("fAmount").value) * 100) / 100;
+    var date = $("fDate").value;
+    var note = $("fNote").value.trim();
+    if (!name || !(amount > 0) || !date) { toast("Fill in the name, a positive amount and the date."); return; }
+    var d = ensureDraft();
+    if (editingId) {
+      var r = d.contributions.filter(function (x) { return x.id === editingId; })[0];
+      if (r) { r.name = name; r.amount = amount; r.date = date; r.note = note; }
+      stage("edited " + name);
+    } else {
+      d.contributions.push({ id: newId(), name: name, amount: amount, date: date, note: note });
+      stage("added " + name + " " + money(amount));
+    }
+    resetForm();
+    $("fName").focus();
+  });
+  $("fCancel").addEventListener("click", resetForm);
+
+  $("table").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button"); if (!b) return;
+    var d = ensureDraft();
+    if (b.dataset.edit) {
+      var r = d.contributions.filter(function (x) { return x.id === b.dataset.edit; })[0]; if (!r) return;
+      editingId = r.id;
+      $("fName").value = r.name; $("fAmount").value = r.amount; $("fDate").value = r.date; $("fNote").value = r.note || "";
+      $("fSubmit").textContent = "Save changes"; $("formTitle").textContent = "Edit contribution"; $("fCancel").hidden = false;
+      $("managePanel").scrollIntoView({ behavior: "smooth", block: "start" }); $("fName").focus();
+    } else if (b.dataset.del) {
+      var idx = -1; d.contributions.forEach(function (x, i) { if (x.id === b.dataset.del) idx = i; });
+      if (idx === -1) return;
+      var gone = d.contributions.splice(idx, 1)[0];
+      if (editingId === gone.id) resetForm();
+      stage("removed " + gone.name + " " + money(gone.amount));
+    }
+  });
+
+  $("settingsForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var d = ensureDraft();
+    var cur = $("sCurrency").value.trim().toUpperCase();
+    if (!/^[A-Z]{3}$/.test(cur)) { toast("Currency must be a 3-letter code such as USD, GBP, NGN or KES."); return; }
+    d.group.name = $("sName").value.trim() || "Group Fund";
+    d.group.currency = cur;
+    d.group.description = $("sDesc").value.trim();
+    var goal = parseFloat($("sGoal").value);
+    d.group.goal = goal > 0 ? Math.round(goal * 100) / 100 : null;
+    d.group.managers = $("sManagers").value.split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+    stage("updated settings");
+  });
+
+  $("clearExamples").addEventListener("click", function () {
+    var d = ensureDraft();
+    d.contributions = d.contributions.filter(function (r) { return !/^ex\d+$/.test(r.id); });
+    delete d.group.example;
+    if (d.group.managers && d.group.managers.join() === "Treasurer 1,Treasurer 2") d.group.managers = [];
+    fillSettings();
+    stage("removed example rows");
+  });
+  var armTimer;
+  $("clearAll").addEventListener("click", function () {
+    var b = $("clearAll");
+    if (b.dataset.armed !== "1") {
+      b.dataset.armed = "1"; b.textContent = "Press again to delete every entry";
+      clearTimeout(armTimer); armTimer = setTimeout(function () { delete b.dataset.armed; b.textContent = "Delete every entry"; }, 5000);
+      return;
+    }
+    delete b.dataset.armed; b.textContent = "Delete every entry"; clearTimeout(armTimer);
+    var d = ensureDraft();
+    d.contributions = [];
+    delete d.group.example;
+    stage("deleted all entries");
+  });
+
+  $("discardBtn").addEventListener("click", function () {
+    draft = null; pendingLabels = []; clearLocalDraft(); resetForm(); fillSettings(); render(); toast("Changes discarded.");
+  });
+
+  $("publishBtn").addEventListener("click", function () {
+    if (!draft || !artifactNS) return;
+    var btn = $("publishBtn"); btn.disabled = true; btn.textContent = "Publishing…";
+    var next = clone(draft);
+    next.group.updatedAt = new Date().toISOString();
+    saveDraftLocally(); // survives a reload after a conflict
+    artifactNS.publish(buildPage(next)).then(function () {
+      clearLocalDraft();
+      toast("Published. The page is reloading with the new version.");
+    }).catch(function (err) {
+      var code = err && err.code;
+      btn.disabled = false; btn.textContent = "Publish";
+      if (code === "not_writer" || code === "not_granted" || code === "not_declared" || code === "consent_required") {
+        becomeReadOnly("You can view this ledger but you are not one of its editors, so your changes were not saved.");
+      } else if (code === "conflict") {
+        toast("Someone else published a newer version. The page is reloading; your unsaved changes will be offered again.");
+      } else if (code === "rate_limited") {
+        toast("Publishing too quickly. Wait a moment and press Publish again.");
+      } else if (code === "too_large") {
+        toast("The ledger is too large to save. Remove some old entries and try again.");
+      } else {
+        toast("Publishing failed (" + (code || "unknown") + "). Try once more in a moment.");
+      }
+    });
+  });
+
+  // ---------- read-only / manager mode ----------
+  function becomeReadOnly(msg) {
+    canWrite = false; draft = null; pendingLabels = []; clearLocalDraft();
+    $("manageBtn").hidden = true; $("managePanel").hidden = true;
+    $("readonlyNotice").textContent = msg; $("readonlyNotice").hidden = false;
+    render();
+  }
+  $("manageBtn").addEventListener("click", function () {
+    var open = $("managePanel").hidden;
+    $("managePanel").hidden = !open;
+    $("manageBtn").textContent = open ? "Hide manager tools" : "Manager tools";
+    if (open) { view = "entries"; fillSettings(); resetForm(); $("managePanel").scrollIntoView({ behavior: "smooth", block: "start" }); }
+    render();
+  });
+  $("closeManage").addEventListener("click", function () { $("managePanel").hidden = true; $("manageBtn").textContent = "Manager tools"; render(); });
+
+  $("viewMembers").addEventListener("click", function () { view = "members"; render(); });
+  $("viewEntries").addEventListener("click", function () { view = "entries"; render(); });
+  $("search").addEventListener("input", render);
+
+  $("exportBtn").addEventListener("click", function () {
+    if (!downloadsNS) return;
+    var st = current();
+    var lines = ["Date,Member,Amount,Currency,Note"];
+    st.contributions.slice().sort(function (a, b) { return (a.date || "").localeCompare(b.date || ""); }).forEach(function (r) {
+      lines.push([r.date, csv(r.name), Number(r.amount).toFixed(2), st.group.currency, csv(r.note || "")].join(","));
+    });
+    var fname = (st.group.name || "ledger").replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "-").toLowerCase() + "-contributions.csv";
+    downloadsNS.save({ filename: fname, data: lines.join("\r\n") + "\r\n" }).then(function () { toast("CSV saved."); })
+      .catch(function (err) { if (err && err.code !== "declined") toast("Could not save the file (" + (err.code || "unknown") + ")."); });
+  });
+  function csv(s) { s = String(s); return /[",\r\n]/.test(s) ? "\"" + s.replace(/"/g, "\"\"") + "\"" : s; }
+
+  var toastTimer;
+  function toast(msg) {
+    var t = $("toast"); t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.hidden = true; }, 4500);
+  }
+
+  // ---------- boot ----------
+  $("fDate").value = today();
+  render();
+
+  var use = (window.claude && typeof window.claude.use === "function") ? function (n) { return window.claude.use(n); } : function () { return Promise.resolve(null); };
+
+  use("downloads").then(function (ns) { downloadsNS = ns; $("exportBtn").hidden = !ns; }).catch(function () {});
+
+  use("permissions").then(function (perms) {
+    if (!perms) return "unknown";
+    return perms.state("artifact");
+  }).then(function (state) {
+    if (state === "unavailable" || state === "denied") return null;
+    return use("artifact");
+  }).then(function (ns) {
+    if (!ns) return;
+    artifactNS = ns; canWrite = true;
+    $("manageBtn").hidden = false;
+    // offer a draft left behind by a reload or a conflict
+    try {
+      var saved = JSON.parse(sessionStorage.getItem("ledger-draft") || "null");
+      if (saved && saved.draft && saved.labels && saved.labels.length) {
+        var a = clone(saved.draft), b = clone(live); delete a.group.updatedAt; delete b.group.updatedAt;
+        if (JSON.stringify(a) === JSON.stringify(b)) { clearLocalDraft(); }
+        else {
+          $("draftNotice").hidden = false;
+          $("restoreDraft").onclick = function () {
+            draft = saved.draft; pendingLabels = saved.labels; $("draftNotice").hidden = true;
+            $("managePanel").hidden = false; $("manageBtn").textContent = "Hide manager tools"; view = "entries"; fillSettings(); render();
+          };
+          $("dropDraft").onclick = function () { clearLocalDraft(); $("draftNotice").hidden = true; };
+        }
+      }
+    } catch (e) {}
+    render();
+  }).catch(function () {});
+})();
+</script>
