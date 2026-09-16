@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Edit contribution · {{ s.group_name }}{% endblock %}
+{% block content %}
+<header>
+  <p class="eyebrow">Manager tools</p>
+  <h1>Edit contribution</h1>
+</header>
+{% if error %}<div class="notice error">{{ error }}</div>{% endif %}
+<section class="panel">
+  <section>
+    <form method="post" class="grid" autocomplete="off">
+      <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+      <label class="f">Member name<input id="name" name="name" required maxlength="80" value="{{ request.form.get('name', row.name) }}"></label>
+      <label class="f">Amount ({{ s.currency }})<input id="amount" name="amount" inputmode="decimal" required value="{{ request.form.get('amount', '%.2f' % (row.amount_cents / 100)) }}"></label>
+      <label class="f">Date received<input id="paid_on" name="paid_on" type="date" required value="{{ request.form.get('paid_on', row.paid_on) }}"></label>
+      <label class="f">Note (optional)<input id="note" name="note" maxlength="120" value="{{ request.form.get('note', row.note) }}"></label>
+      <div class="full row-actions">
+        <button type="submit" class="btn primary">Save changes</button>
+        <a class="btn quiet" href="{{ url_for('manage') }}">Cancel</a>
+      </div>
+    </form>
+    <p class="help">First recorded {{ nice_stamp(row.created_at) }} by {{ row.created_by }}. Last changed {{ nice_stamp(row.updated_at) }} by {{ row.updated_by }}.</p>
+  </section>
+</section>
+{% endblock %}

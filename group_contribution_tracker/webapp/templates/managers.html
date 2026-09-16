@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Managers{% endblock %}
+{% block content %}
+<header>
+  <p class="eyebrow">Manager tools</p>
+  <h1>Managers</h1>
+  <p class="desc">The ledger allows at most {{ max_managers }} managers. Only managers can record, edit or delete contributions.</p>
+</header>
+{% if error %}<div class="notice error">{{ error }}</div>{% endif %}
+<div class="list">
+  {% for m in managers %}
+  <div class="item">
+    <span><b>{{ m.display_name }}</b> <small>· username {{ m.username }} · since {{ nice_date(m.created_at[:10]) }}</small></span>
+    {% if m.id != manager.id %}
+    <form method="post" action="{{ url_for('remove_manager', manager_id=m.id) }}" onsubmit="return confirm('Remove {{ m.display_name }} as a manager?')">
+      <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+      <button type="submit" class="btn small danger">Remove</button>
+    </form>
+    {% else %}<small>you</small>{% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+{% if managers | length < max_managers %}
+<section class="panel">
+  <section>
+    <h3>Add the other manager</h3>
+    <form method="post" class="grid" autocomplete="off">
+      <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+      <label class="f">Name shown to members<input id="display_name" name="display_name" required maxlength="80" value="{{ form.get('display_name', '') }}"></label>
+      <label class="f">Username<input id="username" name="username" required minlength="3" maxlength="30" value="{{ form.get('username', '') }}" autocapitalize="off"></label>
+      <label class="f full">Temporary password<input id="password" name="password" type="password" required minlength="8" autocomplete="new-password"></label>
+      <div class="full row-actions"><button type="submit" class="btn primary">Add manager</button></div>
+    </form>
+    <p class="help">Tell them the username and temporary password privately. They can change the password after signing in.</p>
+  </section>
+</section>
+{% endif %}
+{% endblock %}

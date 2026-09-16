@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ code }}{% endblock %}
+{% block content %}
+<header>
+  <p class="eyebrow">Error {{ code }}</p>
+  <h1>{{ message }}</h1>
+  <p class="desc"><a href="{{ url_for('public') }}">Back to the ledger.</a></p>
+</header>
+{% endblock %}
