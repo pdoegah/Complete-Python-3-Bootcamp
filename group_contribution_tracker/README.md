@@ -1,4 +1,6 @@
-# Contribution Ledger
+# Funeral Contribution For Our Brother Emmanuel Papa Nii Quaye
+
+A contribution ledger for the group. The product name is the group name set in the page settings; managers can change it at any time.
 
 A single-page web app that records money contributions for a group (alumni
 association, club, welfare fund, WhatsApp group). Everyone with the link can
@@ -27,7 +29,7 @@ A manager sees a **Manager tools** button. From there they can:
 - Record a contribution (name, amount, date received, note).
 - Edit or delete an existing entry from the **All entries** view.
 - Change the group name, description, currency code, fund goal, and the manager names shown on the page.
-- Remove the example rows that ship with the page, or clear every entry.
+- Clear every entry (two presses, then Publish) if the ledger must be reset.
 
 Changes are staged first and shown with an "unsaved" tag. Nothing reaches the
 members until the manager presses **Publish** in the bar at the bottom. That
@@ -51,10 +53,11 @@ share settings.
 ## Setting it up for your group
 
 1. Open the live page. As the owner you already have the manager tools.
-2. Press **Manager tools**, then **Remove example rows**.
-3. Fill in **Group settings**: name, currency (three-letter code such as
-   USD, GBP, NGN, KES, GHS, ZAR), an optional goal, and the manager names.
-   Press **Stage settings**, then **Publish**.
+2. Press **Manager tools** and check **Group settings**: the name, the
+   currency (a three-letter code such as GHS, USD, GBP, NGN, KES, ZAR), an
+   optional goal, and the manager names. Press **Stage settings**, then
+   **Publish**.
+3. Record the first contributions with the form, then **Publish**.
 4. Use the share menu on the page to get a link and to add your second
    manager as an editor.
 5. Post the link in the WhatsApp group. Members tap it and see the ledger.
@@ -68,7 +71,7 @@ the next time they open the link.
 ## Files
 
 - `index.html` is the entire app: styles, markup, data, and script in one
-  file. The current ledger data lives in the `<script id="state">` block and
+  file. It ships with an empty ledger under the group's name. The current ledger data lives in the `<script id="state">` block and
   is rewritten by the page itself on every publish.
 - `tests/verify.js` is a Playwright script that exercises the read-only
   view, the manager flow, the CSV export, and a republish round trip.

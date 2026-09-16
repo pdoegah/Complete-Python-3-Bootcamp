@@ -4,7 +4,13 @@ const SRC = path.resolve(__dirname, '..', 'index.html');
 const SCR = process.argv[2] || require('os').tmpdir(); fs.mkdirSync(SCR, { recursive: true });
 // wrap like the Artifact tool does on first publish
 const wrap = body => `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body>${body}</body></html>`;
-fs.writeFileSync(path.join(SCR, 'v1.html'), wrap(fs.readFileSync(SRC, 'utf8')));
+const FIXTURE = JSON.stringify({version:1,group:{name:"Class of 2010 Alumni Fund",description:"Example description.",currency:"USD",goal:5000,managers:["Treasurer 1","Treasurer 2"],updatedAt:"2026-09-16T09:00:00.000Z",example:true},contributions:[
+  {id:"ex1",name:"Amina Yusuf",amount:200,date:"2026-09-02",note:"Bank transfer"},{id:"ex2",name:"Kwame Mensah",amount:150,date:"2026-09-03",note:"Cash"},
+  {id:"ex3",name:"Priya Raman",amount:300,date:"2026-09-05",note:""},{id:"ex4",name:"Amina Yusuf",amount:100,date:"2026-09-10",note:"Second payment"},
+  {id:"ex5",name:"Daniel Okafor",amount:50,date:"2026-09-12",note:"Mobile money"}]});
+const seeded = fs.readFileSync(SRC, 'utf8').replace(/<script id="state" type="application\/json">[\s\S]*?<\/script>/, '<script id="state" type="application/json">' + FIXTURE + '</script>');
+if (seeded.indexOf('Amina Yusuf') < 0) { console.error('FAIL: could not seed fixture'); process.exit(1); }
+fs.writeFileSync(path.join(SCR, 'v1.html'), wrap(seeded));
 
 const stub = (writer) => `
   window.__published = null;
