@@ -7,7 +7,7 @@ from openpyxl.worksheet.formula import ArrayFormula
 TITLE = "Funeral Contribution For Our Brother Emmanuel Papa Nii Quaye"
 DESC = ("Contributions from the group towards the funeral of our brother Emmanuel Papa Nii Quaye. "
         "Every amount received is recorded here by the managers so that all members can see it.")
-MANAGERS = "Charles Quaye and Emmanuel Kpakpoe Addo"
+MANAGERS = "Charles Quaye"
 CUR = '"GH₵"#,##0.00'
 N = 2000          # contribution rows the formulas watch (rows 2..2000)
 M = 60            # max distinct members shown on the Ledger tab
@@ -124,7 +124,7 @@ lines = [
     ("", False),
     ("MEMBERS: open the Ledger tab. It shows the total collected, how many people have given, and each person's total. Nothing on it can be typed into.", False),
     ("", False),
-    ("MANAGERS (Charles Quaye, Emmanuel Kpakpoe Addo): open the Contributions tab and type one row per payment received:", False),
+    ("MANAGERS (Charles Quaye, Emmanuel Kpakpo Addo): open the Contributions tab and type one row per payment received:", False),
     ("   1. Date received – the day the money arrived.", False),
     ("   2. Member name – type the name the same way each time so the person's payments add up together (e.g. always 'Ama Mensah', not sometimes 'Ama').", False),
     ("   3. Amount (GHS) – the amount in cedis, numbers only.", False),

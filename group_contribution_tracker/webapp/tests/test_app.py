@@ -118,10 +118,10 @@ def test_wrong_password_and_lockout(client, app):
 def test_at_most_two_managers(client):
     setup_manager(client)
     token = csrf(client, "/manage/managers")
-    r = client.post("/manage/managers", data={"csrf": token, "username": "emmanuel", "display_name": "Emmanuel Kpakpoe Addo", "password": "another-pass-2"})
+    r = client.post("/manage/managers", data={"csrf": token, "username": "emmanuel", "display_name": "Emmanuel Kpakpo Addo", "password": "another-pass-2"})
     assert r.status_code == 302
     body = client.get("/").get_data(as_text=True)
-    assert "Charles Quaye, Emmanuel Kpakpoe Addo" in body
+    assert "Charles Quaye, Emmanuel Kpakpo Addo" in body
     token = csrf(client, "/manage/managers")
     r = client.post("/manage/managers", data={"csrf": token, "username": "third", "display_name": "Third Person", "password": "another-pass-3"})
     assert "at most 2 managers" in r.get_data(as_text=True)

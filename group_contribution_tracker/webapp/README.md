@@ -143,7 +143,7 @@ From a console on the server, inside the `webapp` folder:
 ```
 flask --app app reset-password charles
 flask --app app list-managers
-flask --app app add-manager emmanuel "Emmanuel Kpakpoe Addo"
+flask --app app add-manager emmanuel "Emmanuel Kpakpo Addo"
 ```
 
 Each command prompts for the password rather than taking it on the command line.
