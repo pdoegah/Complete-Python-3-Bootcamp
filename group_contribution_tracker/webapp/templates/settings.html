@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Settings · {{ s.group_name }}{% endblock %}
+{% block content %}
+<header>
+  <p class="eyebrow">Manager tools</p>
+  <h1>Group settings</h1>
+</header>
+{% if error %}<div class="notice error">{{ error }}</div>{% endif %}
+<section class="panel">
+  <section>
+    <form method="post" class="grid" autocomplete="off">
+      <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+      <label class="f full">Group name<input id="group_name" name="group_name" required maxlength="120" value="{{ s.group_name }}"></label>
+      <label class="f full">Description<textarea id="description" name="description" maxlength="400">{{ s.description }}</textarea></label>
+      <label class="f">Currency code<input id="currency" name="currency" required minlength="3" maxlength="3" value="{{ s.currency }}" style="text-transform:uppercase"></label>
+      <label class="f">Fund goal (optional)<input id="goal" name="goal" inputmode="decimal" value="{{ goal_text }}" placeholder="Leave blank for no goal"></label>
+      <div class="full row-actions">
+        <button type="submit" class="btn primary">Save settings</button>
+        <a class="btn quiet" href="{{ url_for('manage') }}">Cancel</a>
+      </div>
+    </form>
+    <p class="help">Keep the whole ledger in one currency so the total adds up. GHS is Ghana cedis; USD, GBP, EUR and NGN also show their symbols.</p>
+  </section>
+</section>
+{% endblock %}

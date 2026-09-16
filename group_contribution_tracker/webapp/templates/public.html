@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+  <p class="eyebrow">Contribution ledger</p>
+  <h1>{{ s.group_name }}</h1>
+  {% if s.description %}<p class="desc">{{ s.description }}</p>{% endif %}
+  <p class="meta">
+    <span>Managed by <b>{% if managers %}{{ managers | map(attribute='display_name') | join(', ') }}{% else %}the group managers{% endif %}</b></span>
+    <span>Last updated <b>{{ nice_stamp(overall.updated) }}</b></span>
+  </p>
+</header>
+
+<section class="summary" aria-label="Summary">
+  <div class="tile total"><div class="label">Total collected</div><div class="value">{{ money(overall.total, s.currency) }}</div>
+    <div class="sub">{% if s.goal_cents %}of a {{ money(s.goal_cents, s.currency) }} goal{% else %}in {{ s.currency }}{% endif %}</div></div>
+  <div class="tile"><div class="label">Contributors</div><div class="value">{{ data.totals.members if not q else data.totals.members }}</div><div class="sub">people who gave</div></div>
+  <div class="tile"><div class="label">Entries</div><div class="value">{{ data.totals.entries }}</div><div class="sub">payments recorded</div></div>
+  {% if s.goal_cents %}
+  <div class="goal">
+    <div class="row"><span>Progress towards {{ money(s.goal_cents, s.currency) }}</span>
+      <span>{{ pct }}%{% if overall.total >= s.goal_cents %} · goal reached{% else %} · {{ money(s.goal_cents - overall.total, s.currency) }} to go{% endif %}</span></div>
+    <div class="bar"><i style="width: {{ pct }}%"></i></div>
+  </div>
+  {% endif %}
+</section>
+
+<div class="toolbar">
+  <div class="seg" role="group" aria-label="View">
+    <a href="{{ url_for('public', view='members', q=q or None) }}" {% if view == 'members' %}aria-current="page"{% endif %}>By member</a>
+    <a href="{{ url_for('public', view='entries', q=q or None) }}" {% if view == 'entries' %}aria-current="page"{% endif %}>All entries</a>
+  </div>
+  <form method="get" action="{{ url_for('public') }}">
+    <input type="hidden" name="view" value="{{ view }}">
+    <input class="search" type="search" name="q" value="{{ q }}" placeholder="Search a name" aria-label="Search by name">
+    <button type="submit" class="btn">Search</button>
+  </form>
+  <a class="btn" href="{{ url_for('export_csv') }}">Export CSV</a>
+</div>
+
+<div class="tablewrap">
+{% if not data.entries %}
+  <div class="empty">{% if q %}No contributions match "{{ q }}".{% else %}No contributions recorded yet.{% endif %}</div>
+{% elif view == 'members' %}
+  <table>
+    <thead><tr><th class="hide-sm">#</th><th>Member</th><th class="num">Payments</th><th class="hide-sm">Last paid</th><th class="num">Total given</th></tr></thead>
+    <tbody>
+    {% for m in data.members %}
+      <tr><td class="rank hide-sm">{{ loop.index }}</td><td class="name">{{ m.name }}</td><td class="num">{{ m.payments }}</td><td class="date hide-sm">{{ nice_date(m.last_paid) }}</td><td class="num">{{ money(m.total, s.currency) }}</td></tr>
+    {% endfor %}
+    </tbody>
+    <tfoot><tr><td class="hide-sm"></td><td>{{ data.members | length }} contributors</td><td class="num">{{ data.totals.entries }}</td><td class="hide-sm"></td><td class="num">{{ money(data.totals.total, s.currency) }}</td></tr></tfoot>
+  </table>
+{% else %}
+  <table>
+    <thead><tr><th>Date</th><th>Member</th><th class="num">Amount</th><th class="hide-sm">Note</th></tr></thead>
+    <tbody>
+    {% for r in data.entries %}
+      <tr><td class="date">{{ nice_date(r.paid_on) }}</td><td class="name">{{ r.name }}</td><td class="num">{{ money(r.amount_cents, s.currency) }}</td><td class="note hide-sm">{{ r.note }}</td></tr>
+    {% endfor %}
+    </tbody>
+    <tfoot><tr><td></td><td>{{ data.entries | length }} entries</td><td class="num">{{ money(data.totals.total, s.currency) }}</td><td class="hide-sm"></td></tr></tfoot>
+  </table>
+{% endif %}
+</div>
+
+<p class="foot">
+  <span>Members can view this page but not change it. To correct an entry, contact a manager.</span>
+  {% if not manager %}<a href="{{ url_for('login') }}">Manager sign in</a>{% endif %}
+</p>
+{% endblock %}

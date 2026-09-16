@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Record contributions · {{ s.group_name }}{% endblock %}
+{% block content %}
+<header>
+  <p class="eyebrow">Manager tools</p>
+  <h1>Record contributions</h1>
+  <p class="desc">Every entry you save here appears on the public page immediately.</p>
+</header>
+
+<section class="panel">
+  <section>
+    <h3>New contribution</h3>
+    <form method="post" action="{{ url_for('add_entry') }}" class="grid" autocomplete="off">
+      <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+      <label class="f">Member name<input id="name" name="name" list="names" required maxlength="80" placeholder="e.g. Amina Yusuf" autofocus>
+        <datalist id="names">{% for m in data.members %}<option value="{{ m.name }}"></option>{% endfor %}</datalist></label>
+      <label class="f">Amount ({{ s.currency }})<input id="amount" name="amount" inputmode="decimal" required placeholder="0.00"></label>
+      <label class="f">Date received<input id="paid_on" name="paid_on" type="date" required value="{{ today }}"></label>
+      <label class="f">Note (optional)<input id="note" name="note" maxlength="120" placeholder="e.g. Cash, or USD 50 via MoMo"></label>
+      <div class="full row-actions"><button type="submit" class="btn primary">Save to ledger</button></div>
+    </form>
+    <p class="help">Money from abroad: enter the {{ s.currency }} amount that arrived and put the original amount in the note, such as "GBP 40, Western Union".</p>
+  </section>
+</section>
+
+<div class="toolbar">
+  <h2>All entries</h2>
+  <form method="get" action="{{ url_for('manage') }}">
+    <input class="search" type="search" name="q" value="{{ q }}" placeholder="Search a name" aria-label="Search by name">
+    <button type="submit" class="btn">Search</button>
+  </form>
+</div>
+
+<div class="tablewrap">
+{% if not data.entries %}
+  <div class="empty">{% if q %}No contributions match "{{ q }}".{% else %}No contributions recorded yet.{% endif %}</div>
+{% else %}
+  <table>
+    <thead><tr><th>Date</th><th>Member</th><th class="num">Amount</th><th class="hide-sm">Note</th><th class="hide-sm">By</th><th></th></tr></thead>
+    <tbody>
+    {% for r in data.entries %}
+      <tr>
+        <td class="date">{{ nice_date(r.paid_on) }}</td>
+        <td class="name">{{ r.name }}</td>
+        <td class="num">{{ money(r.amount_cents, s.currency) }}</td>
+        <td class="note hide-sm">{{ r.note }}</td>
+        <td class="hide-sm"><small>{{ r.updated_by }}</small></td>
+        <td class="actions">
+          <a class="btn small" href="{{ url_for('edit_entry', entry_id=r.id) }}">Edit</a>
+          <form method="post" action="{{ url_for('delete_entry', entry_id=r.id) }}" onsubmit="return confirm('Remove {{ r.name }}, {{ money(r.amount_cents, s.currency) }}?')">
+            <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+            <button type="submit" class="btn small danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot><tr><td></td><td>{{ data.entries | length }} entries</td><td class="num">{{ money(data.totals.total, s.currency) }}</td><td class="hide-sm"></td><td class="hide-sm"></td><td></td></tr></tfoot>
+  </table>
+{% endif %}
+</div>
+{% endblock %}

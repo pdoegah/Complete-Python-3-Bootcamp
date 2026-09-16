@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Create the first manager{% endblock %}
+{% block content %}
+<header>
+  <p class="eyebrow">First-time setup</p>
+  <h1>Create the first manager account</h1>
+  <p class="desc">This page appears only once, while the ledger has no managers. The account you create here can add one more manager afterwards.</p>
+</header>
+{% if error %}<div class="notice error">{{ error }}</div>{% endif %}
+<section class="panel narrow">
+  <section>
+    <form method="post" class="grid" autocomplete="off">
+      <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+      <label class="f full">Name shown to members<input id="display_name" name="display_name" required maxlength="80" value="{{ form.get('display_name', '') }}" placeholder="e.g. Charles Quaye"></label>
+      <label class="f full">Username<input id="username" name="username" required minlength="3" maxlength="30" value="{{ form.get('username', '') }}" autocapitalize="off" placeholder="e.g. charles"></label>
+      <label class="f full">Password (at least 8 characters)<input id="password" name="password" type="password" required minlength="8" autocomplete="new-password"></label>
+      <div class="full row-actions"><button type="submit" class="btn primary">Create account</button></div>
+    </form>
+  </section>
+</section>
+{% endblock %}
